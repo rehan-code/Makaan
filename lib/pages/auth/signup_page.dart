@@ -57,6 +57,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Navigator.of(context).pushReplacementNamed('/login');
       }
     } on AuthException catch (error) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(error.message),
@@ -64,6 +65,7 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       );
     } catch (error) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Unexpected error occurred'),

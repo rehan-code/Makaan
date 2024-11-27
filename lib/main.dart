@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       title: 'Offers App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF057052)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF059669)),
         useMaterial3: true,
       ),
       initialRoute: '/login',
