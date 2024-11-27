@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:offers_app/pages/auth/login_page.dart';
-import 'package:offers_app/pages/auth/signup_page.dart';
+import 'package:makaan/pages/auth/login_page.dart';
+import 'package:makaan/pages/auth/signup_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
@@ -24,8 +24,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Offers App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF056B4E)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF057052)),
         useMaterial3: true,
       ),
       initialRoute: '/login',
