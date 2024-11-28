@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text.trim(),
       );
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/signup');
+        Navigator.of(context).pushReplacementNamed('/home');
       }
     } on AuthException catch (error) {
       if (!mounted) return;
