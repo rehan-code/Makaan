@@ -62,7 +62,7 @@ class OffersPage extends StatelessWidget {
       shopImage: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
       offerText: '20% off your total bill',
       validity: DateTime.now().add(const Duration(days: 15)),
-      tags: ['Restaurant', 'Chicken', 'Discount'],
+      tags: ['Restaurant', 'Chicken', 'Halal'],
       redemptionType: RedemptionType.both,
       storeDescription: 'Home of the legendary Portuguese flame-grilled PERi-PERi chicken. From the first branch in Ealing, London in 1992 to over 450 restaurants across the UK today.',
       rating: 4.7,

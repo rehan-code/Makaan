@@ -202,13 +202,14 @@ class OfferDetailsPage extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.primaryContainer,
+                                  color: theme.colorScheme.primary.withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
                                   offer.tags[index],
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onPrimaryContainer,
+                                  style: TextStyle(
+                                    color: theme.colorScheme.primary,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -252,11 +253,13 @@ class OfferDetailsPage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      const SizedBox(height: 10),
                       Text(
                         offer.offerText,
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
+                          fontSize: 25,
                         ),
                       ),
                       const SizedBox(height: 12),
