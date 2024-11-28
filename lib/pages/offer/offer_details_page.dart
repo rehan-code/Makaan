@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:makaan/models/offer.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
@@ -420,7 +421,10 @@ class OfferDetailsPage extends StatelessWidget {
                               IconButton(
                                 onPressed: () =>
                                     _launchURL(offer.social.twitter),
-                                icon: const Icon(Icons.facebook),
+                                icon: const Icon(
+                                  FontAwesomeIcons.xTwitter,
+                                  size: 20,
+                                ),
                               ),
                           ],
                         ),
@@ -467,79 +471,72 @@ class OfferDetailsPage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      ...offer.reviews
-                          .take(3)
-                          .map((review) => Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                      ...offer.reviews.take(3).map((review) => Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        CircleAvatar(
-                                          backgroundImage:
-                                              NetworkImage(review.userImage),
-                                          radius: 20,
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                    CircleAvatar(
+                                      backgroundImage:
+                                          NetworkImage(review.userImage),
+                                      radius: 20,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            review.userName,
+                                            style: theme.textTheme.bodyLarge
+                                                ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Row(
                                             children: [
+                                              ...List.generate(
+                                                  5,
+                                                  (index) => Icon(
+                                                        index < review.rating
+                                                            ? Icons.star
+                                                            : Icons.star_border,
+                                                        size: 16,
+                                                        color:
+                                                            Colors.amber[600],
+                                                      )),
+                                              const SizedBox(width: 8),
                                               Text(
-                                                review.userName,
-                                                style: theme.textTheme.bodyLarge
+                                                DateFormat('MMM d, yyyy')
+                                                    .format(review.date),
+                                                style: theme.textTheme.bodySmall
                                                     ?.copyWith(
-                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey[600],
                                                 ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  ...List.generate(
-                                                      5,
-                                                      (index) => Icon(
-                                                            index <
-                                                                    review
-                                                                        .rating
-                                                                ? Icons.star
-                                                                : Icons
-                                                                    .star_border,
-                                                            size: 16,
-                                                            color: Colors
-                                                                .amber[600],
-                                                          )),
-                                                  const SizedBox(width: 8),
-                                                  Text(
-                                                    DateFormat('MMM d, yyyy')
-                                                        .format(review.date),
-                                                    style: theme
-                                                        .textTheme.bodySmall
-                                                        ?.copyWith(
-                                                      color: Colors.grey[600],
-                                                    ),
-                                                  ),
-                                                ],
                                               ),
                                             ],
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      review.comment,
-                                      style: theme.textTheme.bodyMedium,
-                                    ),
-                                    if (review != offer.reviews.take(3).last)
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 16),
-                                        child: Divider(color: Colors.grey[200]),
+                                        ],
                                       ),
+                                    ),
                                   ],
                                 ),
-                              ))
-                          .toList(),
+                                const SizedBox(height: 8),
+                                Text(
+                                  review.comment,
+                                  style: theme.textTheme.bodyMedium,
+                                ),
+                                if (review != offer.reviews.take(3).last)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: Divider(color: Colors.grey[200]),
+                                  ),
+                              ],
+                            ),
+                          )),
                       if (offer.reviews.length > 3)
                         Padding(
                           padding: const EdgeInsets.only(top: 8),
