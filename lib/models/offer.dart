@@ -28,6 +28,54 @@ enum RedemptionType {
   }
 }
 
+class StoreLocation {
+  final String address;
+  final String city;
+  final String state;
+  final String zipCode;
+  final double latitude;
+  final double longitude;
+
+  StoreLocation({
+    required this.address,
+    required this.city,
+    required this.state,
+    required this.zipCode,
+    required this.latitude,
+    required this.longitude,
+  });
+}
+
+class StoreReview {
+  final String userName;
+  final String userImage;
+  final double rating;
+  final String comment;
+  final DateTime date;
+
+  StoreReview({
+    required this.userName,
+    required this.userImage,
+    required this.rating,
+    required this.comment,
+    required this.date,
+  });
+}
+
+class StoreSocial {
+  final String? facebook;
+  final String? instagram;
+  final String? twitter;
+  final String? website;
+
+  StoreSocial({
+    this.facebook,
+    this.instagram,
+    this.twitter,
+    this.website,
+  });
+}
+
 class Offer {
   final String shopName;
   final String shopImage;
@@ -36,6 +84,16 @@ class Offer {
   final List<String> tags;
   final String id;
   final RedemptionType redemptionType;
+  
+  // Additional fields
+  final String storeDescription;
+  final double rating;
+  final int numberOfReviews;
+  final String offerDetails;
+  final List<String> termsAndConditions;
+  final StoreLocation location;
+  final StoreSocial social;
+  final List<StoreReview> reviews;
 
   Offer({
     required this.shopName,
@@ -45,5 +103,13 @@ class Offer {
     required this.tags,
     required this.id,
     required this.redemptionType,
+    required this.storeDescription,
+    required this.rating,
+    required this.numberOfReviews,
+    required this.offerDetails,
+    required this.termsAndConditions,
+    required this.location,
+    required this.social,
+    required this.reviews,
   });
 }
