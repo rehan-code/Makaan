@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:makaan/pages/home/tabs/offers_page.dart';
 import 'package:makaan/pages/home/tabs/directory_page.dart';
-import 'package:makaan/pages/home/tabs/profile_page.dart';
+import 'package:makaan/pages/home/tabs/account_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const OffersPage(),
     const DirectoryPage(),
-    const ProfilePage(),
+    const AccountPage(),
   ];
 
   @override
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
           NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'Account',
           ),
         ],
       ),
