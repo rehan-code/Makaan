@@ -99,106 +99,109 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 70),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () => setState(() => _isBusinessAccount = false),
+                  GestureDetector(
+                    onTap: () => setState(() => _isBusinessAccount = !_isBusinessAccount),
+                    child: Container(
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Stack(
+                          children: [
+                            AnimatedPositioned(
+                              duration: const Duration(milliseconds: 250),
+                              curve: Curves.easeInOut,
+                              left: _isBusinessAccount ? MediaQuery.of(context).size.width / 2 - 24 : 0,
+                              right: _isBusinessAccount ? 0 : MediaQuery.of(context).size.width / 2 - 24,
+                              top: 0,
+                              bottom: 0,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: !_isBusinessAccount 
-                                      ? theme.colorScheme.surface
-                                      : Colors.transparent,
+                                  color: theme.colorScheme.surface,
                                   borderRadius: BorderRadius.circular(8),
-                                  boxShadow: !_isBusinessAccount ? [
+                                  boxShadow: [
                                     BoxShadow(
                                       color: theme.colorScheme.primary.withOpacity(0.1),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
                                     ),
-                                  ] : null,
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.person_outline,
-                                      color: !_isBusinessAccount 
-                                          ? theme.colorScheme.primary
-                                          : theme.colorScheme.onSurfaceVariant,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Personal',
-                                      style: TextStyle(
-                                        color: !_isBusinessAccount 
-                                            ? theme.colorScheme.primary
-                                            : theme.colorScheme.onSurfaceVariant,
-                                        fontWeight: !_isBusinessAccount 
-                                            ? FontWeight.w600
-                                            : FontWeight.normal,
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () => setState(() => _isBusinessAccount = true),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: _isBusinessAccount 
-                                      ? theme.colorScheme.surface
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: _isBusinessAccount ? [
-                                    BoxShadow(
-                                      color: theme.colorScheme.primary.withOpacity(0.1),
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ] : null,
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.business_outlined,
-                                      color: _isBusinessAccount 
-                                          ? theme.colorScheme.primary
-                                          : theme.colorScheme.onSurfaceVariant,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Business',
-                                      style: TextStyle(
-                                        color: _isBusinessAccount 
-                                            ? theme.colorScheme.primary
-                                            : theme.colorScheme.onSurfaceVariant,
-                                        fontWeight: _isBusinessAccount 
-                                            ? FontWeight.w600
-                                            : FontWeight.normal,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: double.infinity,
+                                    color: Colors.transparent,
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.person_outline,
+                                            color: !_isBusinessAccount 
+                                                ? theme.colorScheme.primary
+                                                : theme.colorScheme.onSurfaceVariant,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Personal',
+                                            style: TextStyle(
+                                              color: !_isBusinessAccount 
+                                                  ? theme.colorScheme.primary
+                                                  : theme.colorScheme.onSurfaceVariant,
+                                              fontWeight: !_isBusinessAccount 
+                                                  ? FontWeight.w600
+                                                  : FontWeight.normal,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                Expanded(
+                                  child: Container(
+                                    height: double.infinity,
+                                    color: Colors.transparent,
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.business_outlined,
+                                            color: _isBusinessAccount 
+                                                ? theme.colorScheme.primary
+                                                : theme.colorScheme.onSurfaceVariant,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Business',
+                                            style: TextStyle(
+                                              color: _isBusinessAccount 
+                                                  ? theme.colorScheme.primary
+                                                  : theme.colorScheme.onSurfaceVariant,
+                                              fontWeight: _isBusinessAccount 
+                                                  ? FontWeight.w600
+                                                  : FontWeight.normal,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
