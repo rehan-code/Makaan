@@ -14,6 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _isBusinessAccount = false;
 
   @override
   void dispose() {
@@ -30,10 +31,17 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      await Supabase.instance.client.auth.signInWithPassword(
+      final AuthResponse res = await Supabase.instance.client.auth.signInWithPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      
+      // Update user metadata with account type
+      await Supabase.instance.client
+          .from('profiles')
+          .update({'is_business': _isBusinessAccount})
+          .eq('id', res.user!.id);
+
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/home');
       }
@@ -75,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 160),
+                  const SizedBox(height: 110),
                   Text(
                     'Welcome to\nMakaan',
                     style: theme.textTheme.headlineLarge?.copyWith(
@@ -90,7 +98,111 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.grey[600],
                     ),
                   ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 70),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => setState(() => _isBusinessAccount = false),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: !_isBusinessAccount 
+                                      ? theme.colorScheme.surface
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: !_isBusinessAccount ? [
+                                    BoxShadow(
+                                      color: theme.colorScheme.primary.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ] : null,
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.person_outline,
+                                      color: !_isBusinessAccount 
+                                          ? theme.colorScheme.primary
+                                          : theme.colorScheme.onSurfaceVariant,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Personal',
+                                      style: TextStyle(
+                                        color: !_isBusinessAccount 
+                                            ? theme.colorScheme.primary
+                                            : theme.colorScheme.onSurfaceVariant,
+                                        fontWeight: !_isBusinessAccount 
+                                            ? FontWeight.w600
+                                            : FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => setState(() => _isBusinessAccount = true),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: _isBusinessAccount 
+                                      ? theme.colorScheme.surface
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: _isBusinessAccount ? [
+                                    BoxShadow(
+                                      color: theme.colorScheme.primary.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ] : null,
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.business_outlined,
+                                      color: _isBusinessAccount 
+                                          ? theme.colorScheme.primary
+                                          : theme.colorScheme.onSurfaceVariant,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Business',
+                                      style: TextStyle(
+                                        color: _isBusinessAccount 
+                                            ? theme.colorScheme.primary
+                                            : theme.colorScheme.onSurfaceVariant,
+                                        fontWeight: _isBusinessAccount 
+                                            ? FontWeight.w600
+                                            : FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
