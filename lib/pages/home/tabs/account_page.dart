@@ -6,13 +6,24 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.green,
+      // color: Theme.of(context).primaryColor.withOpacity(0.8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Theme.of(context).primaryColor.withOpacity(0.9),
+            Theme.of(context).scaffoldBackgroundColor,
+            Theme.of(context).scaffoldBackgroundColor,
+          ],
+        ),
+      ),
       child: SafeArea(
         child: Scaffold(
           body: CustomScrollView(
             slivers: [
               SliverAppBar(
-                expandedHeight: 240,
+                expandedHeight: 220,
                 floating: false,
                 pinned: true,
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -54,7 +65,8 @@ class AccountPage extends StatelessWidget {
                               child: const CircleAvatar(
                                 radius: 50,
                                 backgroundColor: Colors.white,
-                                child: Icon(Icons.person, size: 50, color: Colors.grey),
+                                child: Icon(Icons.person,
+                                    size: 50, color: Colors.grey),
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -195,13 +207,12 @@ class AccountPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          Icon(icon, color: Colors.grey, size: 20),
+          Icon(icon, size: 20),
           const SizedBox(width: 16),
           Text(
             text,
             style: const TextStyle(
               fontSize: 15,
-              color: Colors.grey,
             ),
           ),
         ],
