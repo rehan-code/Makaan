@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -246,9 +247,7 @@ class AccountPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: ElevatedButton(
-        onPressed: () {
-          // TODO: Implement logout functionality
-        },
+        onPressed: () => _handleLogout(context),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red.shade400,
           minimumSize: const Size(double.infinity, 48),
@@ -267,5 +266,23 @@ class AccountPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    try {
+      await Supabase.instance.client.auth.signOut();
+      if (context.mounted) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
+    } catch (error) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error logging out. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }
