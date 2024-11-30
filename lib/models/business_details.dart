@@ -5,9 +5,7 @@ class BusinessDetails {
   final bool isHalal;
   final bool isHalalCertified;
   final String location;
-  final String? instagram;
-  final String? facebook;
-  final String? website;
+  final List<SocialLink> socialLinks;
   final String? phoneNumber;
   final String userId;
 
@@ -19,9 +17,7 @@ class BusinessDetails {
     required this.isHalalCertified,
     required this.location,
     required this.userId,
-    this.instagram,
-    this.facebook,
-    this.website,
+    required this.socialLinks,
     this.phoneNumber,
   });
 
@@ -33,9 +29,7 @@ class BusinessDetails {
       'is_halal': isHalal,
       'is_halal_certified': isHalalCertified,
       'location': location,
-      'instagram': instagram,
-      'facebook': facebook,
-      'website': website,
+      'social_links': socialLinks.map((link) => link.toJson()).toList(),
       'phone_number': phoneNumber,
       'user_id': userId,
     };
@@ -49,11 +43,35 @@ class BusinessDetails {
       isHalal: json['is_halal'] as bool,
       isHalalCertified: json['is_halal_certified'] as bool,
       location: json['location'] as String,
-      instagram: json['instagram'] as String?,
-      facebook: json['facebook'] as String?,
-      website: json['website'] as String?,
+      socialLinks: (json['social_links'] as List)
+          .map((link) => SocialLink.fromJson(link as Map<String, dynamic>))
+          .toList(),
       phoneNumber: json['phone_number'] as String?,
       userId: json['user_id'] as String,
+    );
+  }
+}
+
+class SocialLink {
+  final String platform;
+  final String url;
+
+  SocialLink({
+    required this.platform,
+    required this.url,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'platform': platform,
+      'url': url,
+    };
+  }
+
+  factory SocialLink.fromJson(Map<String, dynamic> json) {
+    return SocialLink(
+      platform: json['platform'] as String,
+      url: json['url'] as String,
     );
   }
 }
