@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:makaan/pages/auth/business_details_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -48,6 +49,7 @@ class _SignUpPageState extends State<SignUpPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      print('crated');
 
       // Create profile with account type
       if (res.user != null) {
@@ -56,6 +58,18 @@ class _SignUpPageState extends State<SignUpPage> {
           'is_business': _isBusinessAccount,
           'updated_at': DateTime.now().toIso8601String(),
         });
+      print('upserted');
+
+        if (_isBusinessAccount) {
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => BusinessDetailsPage(userId: res.user!.id),
+              ),
+            );
+            return;
+          }
+        }
       }
 
       if (mounted) {
@@ -77,6 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
       );
     } catch (error) {
       if (!mounted) return;
+      print(error);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Unexpected error occurred'),
