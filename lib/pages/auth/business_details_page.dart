@@ -24,8 +24,8 @@ class _BusinessDetailsPageState extends State<BusinessDetailsPage> {
   bool _isHalal = false;
   bool _isHalalCertified = false;
   bool _isLoading = false;
-  List<String> _selectedTags = [];
-  List<SocialLink> _socialLinks = [];
+  final List<String> _selectedTags = [];
+  final List<SocialLink> _socialLinks = [];
 
   final List<String> _availableTags = [
     'Restaurant',
@@ -186,7 +186,7 @@ class _BusinessDetailsPageState extends State<BusinessDetailsPage> {
                     Text(
                       'Add your business details to get started',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onBackground.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
                       ),
                     ),
                   ],

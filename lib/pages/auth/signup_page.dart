@@ -49,7 +49,6 @@ class _SignUpPageState extends State<SignUpPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      print('crated');
 
       // Create profile with account type
       if (res.user != null) {
@@ -58,7 +57,6 @@ class _SignUpPageState extends State<SignUpPage> {
           'is_business': _isBusinessAccount,
           'updated_at': DateTime.now().toIso8601String(),
         });
-      print('upserted');
 
         if (_isBusinessAccount) {
           if (mounted) {
@@ -91,7 +89,6 @@ class _SignUpPageState extends State<SignUpPage> {
       );
     } catch (error) {
       if (!mounted) return;
-      print(error);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Unexpected error occurred'),
@@ -247,7 +244,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Container(
                       height: 48,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Padding(
