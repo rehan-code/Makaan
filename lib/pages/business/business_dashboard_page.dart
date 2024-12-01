@@ -301,212 +301,369 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 400),
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Create New Offer',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(height: 24),
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              // Header
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 24),
+                decoration: BoxDecoration(
+                  color: theme.primaryColor.withOpacity(0.1),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                child: Row(
                   children: [
-                    TextFormField(
-                      controller: _titleController,
-                      decoration: InputDecoration(
-                        labelText: 'Offer Title',
-                        hintText: 'e.g., Summer Special Discount',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[50],
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: theme.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter an offer title';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _descriptionController,
-                      decoration: InputDecoration(
-                        labelText: 'Description',
-                        hintText: 'Describe your offer...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[50],
+                      child: Icon(
+                        Icons.local_offer_outlined,
+                        color: theme.primaryColor,
                       ),
-                      maxLines: 3,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a description';
-                        }
-                        return null;
-                      },
                     ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _termsController,
-                      decoration: InputDecoration(
-                        labelText: 'Terms and Conditions',
-                        hintText: 'Enter the terms and conditions...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                      ),
-                      maxLines: 5,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter terms and conditions';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _codeController,
-                      decoration: InputDecoration(
-                        labelText: 'Coupon Code',
-                        hintText: 'e.g., SUMMER2024',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[50],
-                        prefixIcon: const Icon(Icons.local_offer_outlined),
-                      ),
-                      textCapitalization: TextCapitalization.characters,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a coupon code';
-                        }
-                        if (value.contains(' ')) {
-                          return 'Coupon code cannot contain spaces';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                          _codeController.value = TextEditingValue(
-                            text: value.toUpperCase(),
-                            selection: _codeController.selection,
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    InkWell(
-                      onTap: () async {
-                        final date = await showDatePicker(
-                          context: context,
-                          initialDate: _validUntil,
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime.now().add(const Duration(days: 365)),
-                        );
-                        if (date != null) {
-                          setState(() {
-                            _validUntil = date;
-                          });
-                        }
-                      },
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]!),
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.grey[50],
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.calendar_today_outlined),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Valid Until',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _validUntil.toString().split(' ')[0],
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Create New Offer',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Fill in the details below',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.textTheme.bodySmall?.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                      style: IconButton.styleFrom(
+                        backgroundColor: theme.colorScheme.surface,
+                        foregroundColor: theme.colorScheme.onSurface,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+              // Form
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInputField(
+                        controller: _titleController,
+                        label: 'Offer Title',
+                        hint: 'e.g., Summer Special Discount',
+                        icon: Icons.title,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter an offer title';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _buildInputField(
+                        controller: _descriptionController,
+                        label: 'Description',
+                        hint: 'Describe your offer...',
+                        icon: Icons.description_outlined,
+                        maxLines: 2,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a description';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _buildInputField(
+                        controller: _termsController,
+                        label: 'Terms and Conditions',
+                        hint: 'Enter the terms and conditions...',
+                        icon: Icons.gavel_outlined,
+                        maxLines: 3,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter terms and conditions';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _buildInputField(
+                        controller: _codeController,
+                        label: 'Coupon Code',
+                        hint: 'e.g., SUMMER2024',
+                        icon: Icons.local_offer_outlined,
+                        textCapitalization: TextCapitalization.characters,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a coupon code';
+                          }
+                          if (value.contains(' ')) {
+                            return 'Coupon code cannot contain spaces';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            _codeController.value = TextEditingValue(
+                              text: value.toUpperCase(),
+                              selection: _codeController.selection,
+                            );
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      // Date Picker
+                      InkWell(
+                        onTap: () async {
+                          final date = await showDatePicker(
+                            context: context,
+                            initialDate: _validUntil,
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime.now().add(const Duration(days: 365)),
+                          );
+                          if (date != null) {
+                            setState(() {
+                              _validUntil = date;
+                            });
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[200]!),
+                            borderRadius: BorderRadius.circular(16),
+                            color: theme.cardColor,
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: theme.primaryColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(
+                                  Icons.calendar_today_outlined,
+                                  color: theme.primaryColor,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Valid Until',
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.textTheme.bodySmall?.color,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _validUntil.toString().split(' ')[0],
+                                      style: theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                                color: theme.textTheme.bodySmall?.color,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      child: const Text('Cancel'),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _createCoupon,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              // Actions
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          side: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.textTheme.bodyLarge?.color,
+                          ),
                         ),
                       ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Create Offer'),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _createCoupon,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: theme.primaryColor,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: _isLoading
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    theme.colorScheme.onPrimary,
+                                  ),
+                                ),
+                              )
+                            : const Text('Create Offer'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+    int maxLines = 1,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+    String? Function(String?)? validator,
+    void Function(String)? onChanged,
+  }) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.textTheme.bodySmall?.color,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.textTheme.bodySmall?.color?.withOpacity(0.5),
+            ),
+            prefixIcon: Container(
+              margin: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: theme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: theme.primaryColor,
+                size: 20,
+              ),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.grey[200]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.grey[200]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: theme.primaryColor),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: theme.colorScheme.error),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: theme.colorScheme.error),
+            ),
+            filled: true,
+            fillColor: theme.cardColor,
+            contentPadding: const EdgeInsets.all(16),
+          ),
+          style: theme.textTheme.bodyLarge,
+          maxLines: maxLines,
+          textCapitalization: textCapitalization,
+          validator: validator,
+          onChanged: onChanged,
+        ),
+      ],
     );
   }
 }
