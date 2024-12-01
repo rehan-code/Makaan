@@ -1,19 +1,19 @@
 class Coupon {
   final String id;
-  final String code;
+  final String title;
   final String description;
-  final double discountPercentage;
-  final DateTime validFrom;
+  final String termsAndConditions;
+  final String code;
   final DateTime validUntil;
   final String businessId;
   final DateTime createdAt;
 
   Coupon({
     required this.id,
-    required this.code,
+    required this.title,
     required this.description,
-    required this.discountPercentage,
-    required this.validFrom,
+    required this.termsAndConditions,
+    required this.code,
     required this.validUntil,
     required this.businessId,
     required this.createdAt,
@@ -22,10 +22,10 @@ class Coupon {
   factory Coupon.fromJson(Map<String, dynamic> json) {
     return Coupon(
       id: json['id'],
-      code: json['code'],
+      title: json['title'],
       description: json['description'],
-      discountPercentage: json['discount_percentage'].toDouble(),
-      validFrom: DateTime.parse(json['valid_from']),
+      termsAndConditions: json['terms_and_conditions'],
+      code: json['code'],
       validUntil: DateTime.parse(json['valid_until']),
       businessId: json['business_id'],
       createdAt: DateTime.parse(json['created_at']),
@@ -35,10 +35,10 @@ class Coupon {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'code': code,
+      'title': title,
       'description': description,
-      'discount_percentage': discountPercentage,
-      'valid_from': validFrom.toIso8601String(),
+      'terms_and_conditions': termsAndConditions,
+      'code': code,
       'valid_until': validUntil.toIso8601String(),
       'business_id': businessId,
       'created_at': createdAt.toIso8601String(),

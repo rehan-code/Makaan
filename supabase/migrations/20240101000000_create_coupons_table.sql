@@ -1,9 +1,9 @@
 create table public.coupons (
   id uuid default gen_random_uuid() primary key,
-  code text not null,
+  title text not null,
   description text not null,
-  discount_percentage double precision not null,
-  valid_from timestamp with time zone not null default now(),
+  terms_and_conditions text not null,
+  code text not null,
   valid_until timestamp with time zone not null,
   business_id uuid not null references auth.users(id) on delete cascade,
   created_at timestamp with time zone not null default now(),
