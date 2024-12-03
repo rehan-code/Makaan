@@ -187,6 +187,20 @@ class _BusinessDashboardPageState extends State<BusinessDashboardPage> {
                                             fontSize: 13,
                                           ),
                                         ),
+                                        const SizedBox(width: 16),
+                                        Icon(
+                                          Icons.confirmation_number,
+                                          size: 16,
+                                          color: Colors.grey[600],
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '${coupon.numCoupons} coupons',
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 13,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -227,6 +241,7 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
   final _descriptionController = TextEditingController();
   final _termsController = TextEditingController();
   final _codeController = TextEditingController();
+  final _numCouponsController = TextEditingController(text: '100');
   DateTime _validUntil = DateTime.now().add(const Duration(days: 30));
   bool _isLoading = false;
 
@@ -236,6 +251,7 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
     _descriptionController.dispose();
     _termsController.dispose();
     _codeController.dispose();
+    _numCouponsController.dispose();
     super.dispose();
   }
 
@@ -257,6 +273,7 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
         'code': _codeController.text.trim().toUpperCase(),
         'valid_until': _validUntil.toIso8601String(),
         'business_id': userId,
+        'num_coupons': int.parse(_numCouponsController.text.trim()),
       });
 
       if (mounted) {
@@ -287,7 +304,7 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 400),
+        constraints: const BoxConstraints(maxWidth: 400, maxHeight: 700),
         decoration: BoxDecoration(
           color: theme.cardColor,
           borderRadius: BorderRadius.circular(24),
@@ -369,23 +386,23 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
                     children: [
                       _buildInputField(
                         controller: _titleController,
-                        label: 'Offer Title',
-                        hint: 'e.g., Summer Special Discount',
+                        label: 'Title',
+                        hint: 'Enter offer title',
                         icon: Icons.title,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter an offer title';
+                            return 'Please enter a title';
                           }
                           return null;
                         },
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
                       _buildInputField(
                         controller: _descriptionController,
                         label: 'Description',
-                        hint: 'Describe your offer...',
-                        icon: Icons.description_outlined,
-                        maxLines: 2,
+                        hint: 'Enter offer description',
+                        icon: Icons.description,
+                        maxLines: 3,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter a description';
@@ -393,12 +410,12 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
                       _buildInputField(
                         controller: _termsController,
-                        label: 'Terms and Conditions',
-                        hint: 'Enter the terms and conditions...',
-                        icon: Icons.gavel_outlined,
+                        label: 'Terms & Conditions',
+                        hint: 'Enter terms and conditions',
+                        icon: Icons.gavel,
                         maxLines: 3,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -407,32 +424,41 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
                       _buildInputField(
                         controller: _codeController,
                         label: 'Coupon Code',
-                        hint: 'e.g., SUMMER2024',
-                        icon: Icons.local_offer_outlined,
+                        hint: 'Enter coupon code',
+                        icon: Icons.code,
                         textCapitalization: TextCapitalization.characters,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter a coupon code';
                           }
-                          if (value.contains(' ')) {
-                            return 'Coupon code cannot contain spaces';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      _buildInputField(
+                        controller: _numCouponsController,
+                        label: 'Number of Coupons',
+                        hint: 'Enter number of coupons',
+                        icon: Icons.confirmation_number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter number of coupons';
+                          }
+                          final number = int.tryParse(value);
+                          if (number == null) {
+                            return 'Please enter a valid number';
+                          }
+                          if (number <= 0) {
+                            return 'Number must be greater than 0';
                           }
                           return null;
                         },
-                        onChanged: (value) {
-                          if (value.isNotEmpty) {
-                            _codeController.value = TextEditingValue(
-                              text: value.toUpperCase(),
-                              selection: _codeController.selection,
-                            );
-                          }
-                        },
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
                       // Date Picker
                       InkWell(
                         onTap: () async {

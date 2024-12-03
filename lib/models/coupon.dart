@@ -7,6 +7,7 @@ class Coupon {
   final DateTime validUntil;
   final String businessId;
   final DateTime createdAt;
+  final int numCoupons;
 
   Coupon({
     required this.id,
@@ -17,6 +18,7 @@ class Coupon {
     required this.validUntil,
     required this.businessId,
     required this.createdAt,
+    required this.numCoupons,
   });
 
   factory Coupon.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class Coupon {
       validUntil: DateTime.parse(json['valid_until']),
       businessId: json['business_id'],
       createdAt: DateTime.parse(json['created_at']),
+      numCoupons: json['num_coupons'],
     );
   }
 
@@ -42,6 +45,7 @@ class Coupon {
       'valid_until': validUntil.toIso8601String(),
       'business_id': businessId,
       'created_at': createdAt.toIso8601String(),
+      'num_coupons': numCoupons,
     };
   }
 }
