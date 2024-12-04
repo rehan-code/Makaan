@@ -21,29 +21,32 @@ class _BusinessDashboardPageState extends State<BusinessDashboardPage> {
 
   Future<void> _loadCoupons() async {
     try {
-      final userId = Supabase.instance.client.auth.currentUser?.id;
-      if (userId == null) return;
-
       final response = await Supabase.instance.client
           .from('coupons')
           .select()
-          .eq('business_id', userId)
           .order('created_at', ascending: false);
 
+      if (!mounted) return;
+
       setState(() {
-        _coupons = (response as List).map((data) => Coupon.fromJson(data)).toList();
+        _coupons = (response as List)
+            .map((coupon) => Coupon.fromJson(coupon))
+            .toList();
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isLoading = false;
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error loading coupons: $e'),
           backgroundColor: Colors.red,
         ),
       );
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -51,9 +54,7 @@ class _BusinessDashboardPageState extends State<BusinessDashboardPage> {
     showDialog(
       context: context,
       builder: (context) => CreateCouponDialog(
-        onCouponCreated: () {
-          _loadCoupons();
-        },
+        onCouponCreated: _loadCoupons,
       ),
     );
   }
@@ -263,16 +264,12 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
     });
 
     try {
-      final userId = Supabase.instance.client.auth.currentUser?.id;
-      if (userId == null) throw Exception('User not logged in');
-
       await Supabase.instance.client.from('coupons').insert({
         'title': _titleController.text.trim(),
         'description': _descriptionController.text.trim(),
         'terms_and_conditions': _termsController.text.trim(),
         'code': _codeController.text.trim().toUpperCase(),
         'valid_until': _validUntil.toIso8601String(),
-        'business_id': userId,
         'num_coupons': int.parse(_numCouponsController.text.trim()),
       });
 
@@ -281,6 +278,7 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
         widget.onCouponCreated();
       }
     } catch (e) {
+      print(e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
