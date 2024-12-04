@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class OfferDetailsPage extends StatelessWidget {
+class OfferDetailsPage extends StatefulWidget {
   final Coupon coupon;
   final BusinessDetails business;
 
@@ -15,6 +15,19 @@ class OfferDetailsPage extends StatelessWidget {
     required this.coupon,
     required this.business,
   });
+
+  @override
+  State<OfferDetailsPage> createState() => _OfferDetailsPageState();
+}
+
+class _OfferDetailsPageState extends State<OfferDetailsPage> {
+  bool _isCodeRevealed = false;
+
+  void _revealCode() {
+    setState(() {
+      _isCodeRevealed = true;
+    });
+  }
 
   void _launchURL(String? url) async {
     if (url != null) {
@@ -80,7 +93,7 @@ class OfferDetailsPage extends StatelessWidget {
                       const Icon(Icons.share, color: Colors.black87, size: 20),
                   onPressed: () {
                     Share.share(
-                      '${business.businessName}: ${coupon.title}',
+                      '${widget.business.businessName}: ${widget.coupon.title}',
                       subject: 'Check out this amazing offer!',
                     );
                   },
@@ -131,7 +144,7 @@ class OfferDetailsPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  business.businessName,
+                                  widget.business.businessName,
                                   style:
                                       theme.textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -189,7 +202,7 @@ class OfferDetailsPage extends StatelessWidget {
                         height: 32,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: business.tags.length,
+                          itemCount: widget.business.tags.length,
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.only(right: 8.0),
@@ -201,7 +214,7 @@ class OfferDetailsPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
-                                  business.tags[index],
+                                  widget.business.tags[index],
                                   style: TextStyle(
                                     color: theme.colorScheme.primary,
                                     fontSize: 12,
@@ -215,9 +228,9 @@ class OfferDetailsPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        business.description.length > 240
-                            ? '${business.description.substring(0, 240)}...'
-                            : business.description,
+                        widget.business.description.length > 240
+                            ? '${widget.business.description.substring(0, 240)}...'
+                            : widget.business.description,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: Colors.grey[600],
                           overflow: TextOverflow.ellipsis,
@@ -250,7 +263,7 @@ class OfferDetailsPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        coupon.title,
+                        widget.coupon.title,
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
@@ -259,7 +272,7 @@ class OfferDetailsPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        coupon.description,
+                        widget.coupon.description,
                         style: theme.textTheme.bodyLarge,
                       ),
                       const SizedBox(height: 16),
@@ -269,7 +282,7 @@ class OfferDetailsPage extends StatelessWidget {
                               size: 20, color: theme.colorScheme.primary),
                           const SizedBox(width: 8),
                           Text(
-                            'Valid until ${DateFormat('dd MMM yyyy').format(coupon.validUntil)}',
+                            'Valid until ${DateFormat('dd MMM yyyy').format(widget.coupon.validUntil)}',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.w500,
@@ -277,6 +290,77 @@ class OfferDetailsPage extends StatelessWidget {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 16),
+                      // Coupon Code Section
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: theme.colorScheme.primary.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            if (_isCodeRevealed)
+                              Column(
+                                children: [
+                                  Text(
+                                    'YOUR COUPON CODE',
+                                    style: theme.textTheme.titleSmall?.copyWith(
+                                      letterSpacing: 1.2,
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.surface,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          widget.coupon.code,
+                                          style: theme.textTheme.titleLarge?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              ElevatedButton(
+                                onPressed: _revealCode,
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 32,
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: const Text('REVEAL CODE'),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -295,7 +379,7 @@ class OfferDetailsPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      ...coupon.termsAndConditions.split('\n').map((term) => Padding(
+                      ...widget.coupon.termsAndConditions.split('\n').map((term) => Padding(
                             padding: const EdgeInsets.only(bottom: 4),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,7 +435,7 @@ class OfferDetailsPage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      business.location,
+                                      widget.business.location,
                                       style: theme.textTheme.bodyLarge,
                                     ),
                                     // TODO: Add detailed location info
@@ -371,7 +455,7 @@ class OfferDetailsPage extends StatelessWidget {
                 ),
 
                 // Social Links
-                if (business.socialLinks.isNotEmpty)
+                if (widget.business.socialLinks.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -387,7 +471,7 @@ class OfferDetailsPage extends StatelessWidget {
                         const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: business.socialLinks.map((link) {
+                          children: widget.business.socialLinks.map((link) {
                             IconData icon;
                             switch (link.platform.toLowerCase()) {
                               case 'instagram':
