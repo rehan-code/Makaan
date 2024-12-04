@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:makaan/models/offer.dart';
+import 'package:makaan/models/business_details.dart';
+import 'package:makaan/models/coupon.dart';
 import 'package:makaan/widgets/offer_card.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -11,7 +12,7 @@ class OffersPage extends StatefulWidget {
 }
 
 class _OffersPageState extends State<OffersPage> {
-  List<Offer> _offers = [];
+  List<(Coupon, BusinessDetails)> _offers = [];
   bool _isLoading = true;
 
   @override
@@ -41,6 +42,8 @@ class _OffersPageState extends State<OffersPage> {
               code,
               valid_until,
               business_id,
+              created_at,
+              num_coupons,
               business:business_details (
                 business_name,
                 description,
@@ -48,7 +51,9 @@ class _OffersPageState extends State<OffersPage> {
                 is_halal,
                 is_halal_certified,
                 location,
-                social_links
+                social_links,
+                phone_number,
+                user_id
               )
             )
           ''')
@@ -59,54 +64,20 @@ class _OffersPageState extends State<OffersPage> {
 
       setState(() {
         _offers = (response as List).map((data) {
-          final coupon = data['coupon'];
-          print('coupon: $coupon');
-          final business = coupon['business'];
-          print('business: $business');
+          final couponData = data['coupon'];
+          final businessData = couponData['business'];
           
-          return Offer(
-            id: coupon['id'],
-            shopName: business['business_name'],
-            shopImage: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80', // TODO: Add business image
-            offerText: coupon['title'],
-            validity: DateTime.parse(coupon['valid_until']),
-            tags: List<String>.from(business['tags'] ?? []),
-            redemptionType: RedemptionType.inStore, // TODO: Add redemption type to coupons
-            storeDescription: business['description'],
-            rating: 4.5, // TODO: Add ratings system
-            numberOfReviews: 0, // TODO: Add reviews system
-            offerDetails: coupon['description'],
-            termsAndConditions: coupon['terms_and_conditions'].split('\n'),
-            location: StoreLocation(
-              address: business['location'] ?? '',
-              city: '',
-              state: '',
-              zipCode: '',
-              latitude: 0.0,
-              longitude: 0.0,
-            ),
-            social: StoreSocial(
-              instagram: business['social_links']?.firstWhere(
-                (link) => link['platform'] == 'instagram', 
-                orElse: () => {'url': ''})['url'] ?? '',
-              facebook: business['social_links']?.firstWhere(
-                (link) => link['platform'] == 'facebook', 
-                orElse: () => {'url': ''})['url'] ?? '',
-              website: business['social_links']?.firstWhere(
-                (link) => link['platform'] == 'website', 
-                orElse: () => {'url': ''})['url'] ?? '',
-            ),
-            reviews: [], // TODO: Add reviews system
-          );
+          final coupon = Coupon.fromJson(couponData);
+          final business = BusinessDetails.fromJson(businessData);
+
+          return (coupon, business);
         }).toList();
 
-        print(_offers);
         _isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
-        print(e);
-      
+
       setState(() {
         _isLoading = false;
       });
@@ -167,9 +138,13 @@ class _OffersPageState extends State<OffersPage> {
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 16),
         itemCount: _offers.length,
-        itemBuilder: (context, index) => OfferCard(
-          offer: _offers[index],
-        ),
+        itemBuilder: (context, index) {
+          final (coupon, business) = _offers[index];
+          return OfferCard(
+            coupon: coupon,
+            business: business,
+          );
+        },
       ),
     );
   }

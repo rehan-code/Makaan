@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:makaan/models/offer.dart';
+import 'package:makaan/models/business_details.dart';
+import 'package:makaan/models/coupon.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:makaan/pages/offer/all_reviews_page.dart';
 
 class OfferDetailsPage extends StatelessWidget {
-  final Offer offer;
+  final Coupon coupon;
+  final BusinessDetails business;
 
   const OfferDetailsPage({
     super.key,
-    required this.offer,
+    required this.coupon,
+    required this.business,
   });
 
   void _launchURL(String? url) async {
@@ -24,8 +26,8 @@ class OfferDetailsPage extends StatelessWidget {
   }
 
   void _openMap() async {
-    final url =
-        'https://www.google.com/maps/search/?api=1&query=${offer.location.latitude},${offer.location.longitude}';
+    // TODO: Add proper location handling
+    final url = 'https://www.google.com/maps/search/?api=1&query=0,0';
     _launchURL(url);
   }
 
@@ -78,7 +80,7 @@ class OfferDetailsPage extends StatelessWidget {
                       const Icon(Icons.share, color: Colors.black87, size: 20),
                   onPressed: () {
                     Share.share(
-                      '${offer.shopName}: ${offer.offerText}',
+                      '${business.businessName}: ${coupon.title}',
                       subject: 'Check out this amazing offer!',
                     );
                   },
@@ -90,7 +92,7 @@ class OfferDetailsPage extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.network(
-                    offer.shopImage,
+                    'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80', // TODO: Add business image
                     fit: BoxFit.cover,
                   ),
                   Container(
@@ -129,7 +131,7 @@ class OfferDetailsPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  offer.shopName,
+                                  business.businessName,
                                   style:
                                       theme.textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -142,17 +144,10 @@ class OfferDetailsPage extends StatelessWidget {
                                         color: Colors.amber[600], size: 20),
                                     const SizedBox(width: 4),
                                     Text(
-                                      offer.rating.toString(),
+                                      '4.5', // TODO: Add ratings system
                                       style:
                                           theme.textTheme.bodyLarge?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      ' (${offer.numberOfReviews} reviews)',
-                                      style:
-                                          theme.textTheme.bodyMedium?.copyWith(
-                                        color: Colors.grey[600],
                                       ),
                                     ),
                                   ],
@@ -171,13 +166,13 @@ class OfferDetailsPage extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  offer.redemptionType.icon,
+                                  Icons.store, // TODO: Add redemption type
                                   size: 16,
                                   color: theme.colorScheme.primary,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  offer.redemptionType.displayText,
+                                  'In Store', // TODO: Add redemption type
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w500,
@@ -194,7 +189,7 @@ class OfferDetailsPage extends StatelessWidget {
                         height: 32,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: offer.tags.length,
+                          itemCount: business.tags.length,
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.only(right: 8.0),
@@ -206,7 +201,7 @@ class OfferDetailsPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
-                                  offer.tags[index],
+                                  business.tags[index],
                                   style: TextStyle(
                                     color: theme.colorScheme.primary,
                                     fontSize: 12,
@@ -220,9 +215,9 @@ class OfferDetailsPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        offer.storeDescription.length > 240
-                            ? '${offer.storeDescription.substring(0, 240)}...'
-                            : offer.storeDescription,
+                        business.description.length > 240
+                            ? '${business.description.substring(0, 240)}...'
+                            : business.description,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: Colors.grey[600],
                           overflow: TextOverflow.ellipsis,
@@ -255,7 +250,7 @@ class OfferDetailsPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        offer.offerText,
+                        coupon.title,
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
@@ -264,7 +259,7 @@ class OfferDetailsPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        offer.offerDetails,
+                        coupon.description,
                         style: theme.textTheme.bodyLarge,
                       ),
                       const SizedBox(height: 16),
@@ -274,7 +269,7 @@ class OfferDetailsPage extends StatelessWidget {
                               size: 20, color: theme.colorScheme.primary),
                           const SizedBox(width: 8),
                           Text(
-                            'Valid until ${DateFormat('dd MMM yyyy').format(offer.validity)}',
+                            'Valid until ${DateFormat('dd MMM yyyy').format(coupon.validUntil)}',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.w500,
@@ -300,7 +295,7 @@ class OfferDetailsPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      ...offer.termsAndConditions.map((term) => Padding(
+                      ...coupon.termsAndConditions.split('\n').map((term) => Padding(
                             padding: const EdgeInsets.only(bottom: 4),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,16 +351,10 @@ class OfferDetailsPage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      offer.location.address,
+                                      business.location,
                                       style: theme.textTheme.bodyLarge,
                                     ),
-                                    Text(
-                                      '${offer.location.city}, ${offer.location.state} ${offer.location.zipCode}',
-                                      style:
-                                          theme.textTheme.bodyMedium?.copyWith(
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
+                                    // TODO: Add detailed location info
                                   ],
                                 ),
                               ),
@@ -382,10 +371,7 @@ class OfferDetailsPage extends StatelessWidget {
                 ),
 
                 // Social Links
-                if (offer.social.facebook != null ||
-                    offer.social.instagram != null ||
-                    offer.social.twitter != null ||
-                    offer.social.website != null)
+                if (business.socialLinks.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -401,174 +387,33 @@ class OfferDetailsPage extends StatelessWidget {
                         const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (offer.social.website != null)
-                              IconButton(
-                                onPressed: () =>
-                                    _launchURL(offer.social.website),
-                                icon: const Icon(Icons.language),
-                              ),
-                            if (offer.social.facebook != null)
-                              IconButton(
-                                onPressed: () =>
-                                    _launchURL(offer.social.facebook),
-                                icon: const Icon(Icons.facebook),
-                              ),
-                            if (offer.social.instagram != null)
-                              IconButton(
-                                onPressed: () =>
-                                    _launchURL(offer.social.instagram),
-                                icon: const Icon(Icons.camera_alt_outlined),
-                              ),
-                            if (offer.social.twitter != null)
-                              IconButton(
-                                onPressed: () =>
-                                    _launchURL(offer.social.twitter),
-                                icon: const Icon(
-                                  FontAwesomeIcons.xTwitter,
-                                  size: 20,
-                                ),
-                              ),
-                          ],
+                          children: business.socialLinks.map((link) {
+                            IconData icon;
+                            switch (link.platform.toLowerCase()) {
+                              case 'instagram':
+                                icon = Icons.camera_alt_outlined;
+                                break;
+                              case 'facebook':
+                                icon = Icons.facebook;
+                                break;
+                              case 'twitter':
+                                icon = FontAwesomeIcons.xTwitter;
+                                break;
+                              case 'website':
+                                icon = Icons.language;
+                                break;
+                              default:
+                                icon = Icons.link;
+                            }
+                            return IconButton(
+                              onPressed: () => _launchURL(link.url),
+                              icon: Icon(icon),
+                            );
+                          }).toList(),
                         ),
                       ],
                     ),
                   ),
-
-                // Reviews Section
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'REVIEWS',
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AllReviewsPage(
-                                    reviews: offer.reviews,
-                                    shopName: offer.shopName,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              'View All',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      ...offer.reviews.take(3).map((review) => Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundImage:
-                                          NetworkImage(review.userImage),
-                                      radius: 20,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            review.userName,
-                                            style: theme.textTheme.bodyLarge
-                                                ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              ...List.generate(
-                                                  5,
-                                                  (index) => Icon(
-                                                        index < review.rating
-                                                            ? Icons.star
-                                                            : Icons.star_border,
-                                                        size: 16,
-                                                        color:
-                                                            Colors.amber[600],
-                                                      )),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                DateFormat('MMM d, yyyy')
-                                                    .format(review.date),
-                                                style: theme.textTheme.bodySmall
-                                                    ?.copyWith(
-                                                  color: Colors.grey[600],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  review.comment,
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                                if (review != offer.reviews.take(3).last)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 16),
-                                    child: Divider(color: Colors.grey[200]),
-                                  ),
-                              ],
-                            ),
-                          )),
-                      if (offer.reviews.length > 3)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Center(
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AllReviewsPage(
-                                      reviews: offer.reviews,
-                                      shopName: offer.shopName,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'See all ${offer.reviews.length} reviews',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),

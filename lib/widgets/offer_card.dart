@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:makaan/models/offer.dart';
+import 'package:makaan/models/business_details.dart';
+import 'package:makaan/models/coupon.dart';
 import 'package:intl/intl.dart';
 import 'package:makaan/pages/offer/offer_details_page.dart';
 import 'package:share_plus/share_plus.dart';
 
 class OfferCard extends StatelessWidget {
-  final Offer offer;
+  final Coupon coupon;
+  final BusinessDetails business;
 
   const OfferCard({
     super.key,
-    required this.offer,
+    required this.coupon,
+    required this.business,
   });
 
   void _shareOffer() {
     Share.share(
-      'Check out this amazing offer at ${offer.shopName}: ${offer.offerText}. Valid until ${DateFormat('dd MMM yyyy').format(offer.validity)}',
+      'Check out this amazing offer at ${business.businessName}: ${coupon.title}. Valid until ${DateFormat('dd MMM yyyy').format(coupon.validUntil)}',
     );
   }
 
@@ -27,7 +30,10 @@ class OfferCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => OfferDetailsPage(offer: offer),
+            builder: (context) => OfferDetailsPage(
+              coupon: coupon,
+              business: business,
+            ),
           ),
         );
       },
@@ -49,7 +55,7 @@ class OfferCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                     image: DecorationImage(
-                      image: NetworkImage(offer.shopImage),
+                      image: const NetworkImage('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'), // TODO: Add business image
                       fit: BoxFit.cover,
                       colorFilter: ColorFilter.mode(
                         Colors.black.withOpacity(0.2),
@@ -71,13 +77,13 @@ class OfferCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          offer.redemptionType.icon,
+                          Icons.store, // TODO: Add redemption type
                           size: 16,
                           color: theme.colorScheme.primary,
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          offer.redemptionType.displayText,
+                          'In Store', // TODO: Add redemption type
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.w500,
@@ -97,7 +103,7 @@ class OfferCard extends StatelessWidget {
                 children: [
                   // Shop Name
                   Text(
-                    offer.shopName.toUpperCase(),
+                    business.businessName.toUpperCase(),
                     style: theme.textTheme.bodySmall?.copyWith(
                       letterSpacing: 1.2,
                       fontWeight: FontWeight.w600,
@@ -108,7 +114,7 @@ class OfferCard extends StatelessWidget {
                   
                   // Offer Text (Main Focus)
                   Text(
-                    offer.offerText,
+                    coupon.title,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       height: 1.2,
@@ -120,7 +126,7 @@ class OfferCard extends StatelessWidget {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: offer.tags.map((tag) => Container(
+                    children: business.tags.map((tag) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withOpacity(0.08),
@@ -159,7 +165,7 @@ class OfferCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            DateFormat('dd MMM yyyy').format(offer.validity),
+                            DateFormat('dd MMM yyyy').format(coupon.validUntil),
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
