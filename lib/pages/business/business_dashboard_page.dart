@@ -278,7 +278,6 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
         widget.onCouponCreated();
       }
     } catch (e) {
-      print(e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

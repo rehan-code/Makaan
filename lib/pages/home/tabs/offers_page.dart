@@ -66,8 +66,12 @@ class _OffersPageState extends State<OffersPage> {
         _offers = (response as List).map((data) {
           final couponData = data['coupon'];
           final businessData = couponData['business'];
-          
-          final coupon = Coupon.fromJson(couponData);
+                    
+          final coupon = Coupon.fromJson({
+            ...couponData,
+            'assignment_id': data['id'], // Add assignment ID from coupon_assignments table
+            'is_revealed': data['is_revealed'] ?? false,
+          });
           final business = BusinessDetails.fromJson(businessData);
 
           return (coupon, business);

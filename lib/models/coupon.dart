@@ -8,6 +8,8 @@ class Coupon {
   final String businessId;
   final DateTime createdAt;
   final int numCoupons;
+  final String? assignmentId;
+  bool? isRevealed;
 
   Coupon({
     required this.id,
@@ -19,6 +21,8 @@ class Coupon {
     required this.businessId,
     required this.createdAt,
     required this.numCoupons,
+    this.assignmentId,
+    this.isRevealed = false,
   });
 
   factory Coupon.fromJson(Map<String, dynamic> json) {
@@ -32,6 +36,8 @@ class Coupon {
       businessId: json['business_id'],
       createdAt: DateTime.parse(json['created_at']),
       numCoupons: json['num_coupons'],
+      assignmentId: json['assignment_id'],
+      isRevealed: json['is_revealed'] ?? false,
     );
   }
 
@@ -46,6 +52,8 @@ class Coupon {
       'business_id': businessId,
       'created_at': createdAt.toIso8601String(),
       'num_coupons': numCoupons,
+      'assignment_id': assignmentId,
+      'is_revealed': isRevealed,
     };
   }
 }

@@ -5,6 +5,7 @@ import 'package:makaan/models/coupon.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OfferDetailsPage extends StatefulWidget {
   final Coupon coupon;
@@ -22,11 +23,107 @@ class OfferDetailsPage extends StatefulWidget {
 
 class _OfferDetailsPageState extends State<OfferDetailsPage> {
   bool _isCodeRevealed = false;
+  String? _revealedCode;
+  bool _isLoading = false;
 
-  void _revealCode() {
-    setState(() {
-      _isCodeRevealed = true;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _checkRevealedCode();
+  }
+
+  Future<void> _checkRevealedCode() async {
+    if (widget.coupon.assignmentId == null) {
+      // print('No assignment ID available');
+      return;
+    }
+
+    if (widget.coupon.isRevealed != null && widget.coupon.isRevealed!) {
+      try {
+        final response = await Supabase.instance.client
+            .from('coupon_assignments')
+            .select('coupons (code)')
+            .eq('id', widget.coupon.assignmentId)
+            .single();
+
+        if (mounted && response != null && response['coupons'] != null) {
+          setState(() {
+            _revealedCode = response['coupons']['code'] as String;
+            _isCodeRevealed = true;
+          });
+        }
+      } catch (e) {
+        // print('Error fetching revealed code: $e');
+        // Reset the revealed state if we can't fetch the code
+        if (mounted) {
+          setState(() {
+            widget.coupon.isRevealed = false;
+            _isCodeRevealed = false;
+            _revealedCode = null;
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> _revealCode() async {
+    if (widget.coupon.assignmentId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No assignment ID available for this coupon'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final response = await Supabase.instance.client
+          .rpc('reveal_coupon_code', params: {
+        'p_assignment_id': widget.coupon.assignmentId,
+      });
+
+      if (!mounted) return;
+
+      if (response != null && response is List && response.isNotEmpty && response[0]['code'] != null) {
+        setState(() {
+          _revealedCode = response[0]['code'] as String;
+          _isCodeRevealed = true;
+          widget.coupon.isRevealed = true;
+        });
+      } else {
+        throw Exception('Invalid response format from reveal_coupon_code');
+      }
+    } catch (e) {
+      // print('Error revealing code: $e');
+      // print('Assignment ID: ${widget.coupon.assignmentId}');
+      
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to reveal code: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+
+      // Reset states on error
+      setState(() {
+        widget.coupon.isRevealed = false;
+        _isCodeRevealed = false;
+        _revealedCode = null;
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   void _launchURL(String? url) async {
@@ -304,7 +401,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                         ),
                         child: Column(
                           children: [
-                            if (_isCodeRevealed)
+                            if (_isCodeRevealed && _revealedCode != null)
                               Column(
                                 children: [
                                   Text(
@@ -332,7 +429,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          widget.coupon.code,
+                                          _revealedCode!,
                                           style: theme.textTheme.titleLarge?.copyWith(
                                             fontWeight: FontWeight.bold,
                                             letterSpacing: 1.5,
@@ -345,7 +442,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                               )
                             else
                               ElevatedButton(
-                                onPressed: _revealCode,
+                                onPressed: _isLoading ? null : _revealCode,
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 32,
@@ -355,7 +452,15 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                child: const Text('REVEAL CODE'),
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Text('REVEAL CODE'),
                               ),
                           ],
                         ),
