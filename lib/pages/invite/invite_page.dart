@@ -90,90 +90,89 @@ class _InvitePageState extends State<InvitePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Invite Friends'),
-      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: _loadInvites,
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Invite your friends to join!',
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'You can invite up to 5 friends per month. You have ${5 - _monthlyInviteCount} invites remaining this month.',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          if (_monthlyInviteCount < 5)
-                            ElevatedButton.icon(
-                              onPressed: _createInvite,
-                              icon: const Icon(Icons.add),
-                              label: const Text('Generate New Invite Code'),
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: const Size(double.infinity, 48),
+              child: SafeArea(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Share Makaan with your friends!',
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (_invites.isEmpty)
-                    const SliverFillRemaining(
-                      child: Center(
-                        child: Text('No invites yet'),
-                      ),
-                    )
-                  else
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final invite = _invites[index];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
+                            const SizedBox(height: 8),
+                            Text(
+                              'New users need an invite code to join. You can invite up to 5 friends per month. You have ${5 - _monthlyInviteCount} invites remaining this month.',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
                             ),
-                            child: ListTile(
-                              title: Text(
-                                invite.code,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
+                            const SizedBox(height: 16),
+                            if (_monthlyInviteCount < 5)
+                              ElevatedButton.icon(
+                                onPressed: _createInvite,
+                                icon: const Icon(Icons.add),
+                                label: const Text('Generate New Invite Code'),
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 48),
                                 ),
                               ),
-                              subtitle: Text(
-                                invite.isUsed
-                                    ? 'Used on ${invite.usedAt?.toString().split(' ')[0]}'
-                                    : 'Created on ${invite.createdAt.toString().split(' ')[0]}',
-                              ),
-                              trailing: invite.isUsed
-                                  ? const Icon(Icons.check_circle, color: Colors.green)
-                                  : IconButton(
-                                      icon: const Icon(Icons.copy),
-                                      onPressed: () => _copyInviteCode(invite.code),
-                                    ),
-                            ),
-                          );
-                        },
-                        childCount: _invites.length,
+                          ],
+                        ),
                       ),
                     ),
-                ],
+                    if (_invites.isEmpty)
+                      const SliverFillRemaining(
+                        child: Center(
+                          child: Text('No invites yet'),
+                        ),
+                      )
+                    else
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final invite = _invites[index];
+                            return Card(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  invite.code,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  invite.isUsed
+                                      ? 'Used on ${invite.usedAt?.toString().split(' ')[0]}'
+                                      : 'Created on ${invite.createdAt.toString().split(' ')[0]}',
+                                ),
+                                trailing: invite.isUsed
+                                    ? const Icon(Icons.check_circle, color: Colors.green)
+                                    : IconButton(
+                                        icon: const Icon(Icons.copy),
+                                        onPressed: () => _copyInviteCode(invite.code),
+                                      ),
+                              ),
+                            );
+                          },
+                          childCount: _invites.length,
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
     );

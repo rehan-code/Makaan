@@ -48,12 +48,14 @@ class _SignUpPageState extends State<SignUpPage> {
     });
 
     try {
-      // Validate invite code first
-      if (_inviteCodeController.text.isNotEmpty) {
-        final isValid = await InviteService.useInviteCode(_inviteCodeController.text);
-        if (!isValid) {
-          throw Exception('Invalid or already used invite code');
-        }
+      // Validate invite code
+      if (_inviteCodeController.text.isEmpty) {
+        throw Exception('Invite code is required to create an account');
+      }
+      
+      final isValid = await InviteService.useInviteCode(_inviteCodeController.text);
+      if (!isValid) {
+        throw Exception('Invalid or already used invite code');
       }
 
       final AuthResponse res = await Supabase.instance.client.auth.signUp(
@@ -253,8 +255,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   TextFormField(
                     controller: _inviteCodeController,
                     decoration: InputDecoration(
-                      labelText: 'Invite Code (Optional)',
-                      hintText: 'Enter invite code if you have one',
+                      labelText: 'Invite Code',
+                      hintText: 'Enter your invite code',
                       prefixIcon: Icon(Icons.card_giftcard_outlined, color: theme.colorScheme.primary),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -268,6 +270,12 @@ class _SignUpPageState extends State<SignUpPage> {
                         borderSide: BorderSide(color: theme.colorScheme.primary),
                       ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an invite code';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 48),
                   GestureDetector(
