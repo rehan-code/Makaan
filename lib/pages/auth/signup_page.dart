@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:makaan/pages/auth/business_details_page.dart';
+import 'package:makaan/services/invite_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -13,6 +14,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _inviteCodeController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -24,6 +26,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _inviteCodeController.dispose();
     super.dispose();
   }
 
@@ -45,6 +48,14 @@ class _SignUpPageState extends State<SignUpPage> {
     });
 
     try {
+      // Validate invite code first
+      if (_inviteCodeController.text.isNotEmpty) {
+        final isValid = await InviteService.useInviteCode(_inviteCodeController.text);
+        if (!isValid) {
+          throw Exception('Invalid or already used invite code');
+        }
+      }
+
       final AuthResponse res = await Supabase.instance.client.auth.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -90,8 +101,8 @@ class _SignUpPageState extends State<SignUpPage> {
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unexpected error occurred'),
+        SnackBar(
+          content: Text(error.toString()),
           backgroundColor: Colors.red,
         ),
       );
@@ -237,6 +248,26 @@ class _SignUpPageState extends State<SignUpPage> {
                       }
                       return null;
                     },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _inviteCodeController,
+                    decoration: InputDecoration(
+                      labelText: 'Invite Code (Optional)',
+                      hintText: 'Enter invite code if you have one',
+                      prefixIcon: Icon(Icons.card_giftcard_outlined, color: theme.colorScheme.primary),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: theme.colorScheme.primary),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 48),
                   GestureDetector(

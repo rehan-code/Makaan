@@ -3,6 +3,7 @@ import 'package:makaan/pages/home/tabs/offers_page.dart';
 import 'package:makaan/pages/home/tabs/directory_page.dart';
 import 'package:makaan/pages/home/tabs/account_page.dart';
 import 'package:makaan/pages/business/business_dashboard_page.dart';
+import 'package:makaan/pages/invite/invite_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -45,8 +46,9 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> get _pages => [
     const OffersPage(),
-    const DirectoryPage(),
+    const InvitePage(),
     if (_isBusinessAccount) const BusinessDashboardPage(),
+    const DirectoryPage(),
     const AccountPage(),
   ];
 
@@ -68,9 +70,9 @@ class _HomePageState extends State<HomePage> {
             label: 'Offers',
           ),
           const NavigationDestination(
-            icon: Icon(Icons.business_outlined),
-            selectedIcon: Icon(Icons.business),
-            label: 'Directory',
+            icon: Icon(Icons.people_outline),
+            selectedIcon: Icon(Icons.people),
+            label: 'Invite',
           ),
           if (_isBusinessAccount)
             const NavigationDestination(
@@ -78,6 +80,11 @@ class _HomePageState extends State<HomePage> {
               selectedIcon: Icon(Icons.dashboard),
               label: 'Dashboard',
             ),
+          const NavigationDestination(
+            icon: Icon(Icons.business_outlined),
+            selectedIcon: Icon(Icons.business),
+            label: 'Directory',
+          ),
           const NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
