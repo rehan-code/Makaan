@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:makaan/pages/business/offer_preview_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/coupon.dart';
 
@@ -259,38 +260,57 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
   Future<void> _createCoupon() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    // Navigate to preview page
+    final confirmed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => OfferPreviewPage(
+          title: _titleController.text.trim(),
+          description: _descriptionController.text.trim(),
+          termsAndConditions: _termsController.text.trim(),
+          code: _codeController.text.trim().toUpperCase(),
+          validUntil: _validUntil,
+          numCoupons: int.parse(_numCouponsController.text.trim()),
+          onConfirm: () async {
+            setState(() {
+              _isLoading = true;
+            });
 
-    try {
-      await Supabase.instance.client.from('coupons').insert({
-        'title': _titleController.text.trim(),
-        'description': _descriptionController.text.trim(),
-        'terms_and_conditions': _termsController.text.trim(),
-        'code': _codeController.text.trim().toUpperCase(),
-        'valid_until': _validUntil.toIso8601String(),
-        'num_coupons': int.parse(_numCouponsController.text.trim()),
-      });
+            try {
+              await Supabase.instance.client.from('coupons').insert({
+                'title': _titleController.text.trim(),
+                'description': _descriptionController.text.trim(),
+                'terms_and_conditions': _termsController.text.trim(),
+                'code': _codeController.text.trim().toUpperCase(),
+                'valid_until': _validUntil.toIso8601String(),
+                'num_coupons': int.parse(_numCouponsController.text.trim()),
+              });
 
-      if (mounted) {
-        Navigator.of(context).pop();
-        widget.onCouponCreated();
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error creating coupon: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+              if (mounted) {
+                Navigator.of(context).pop(true);
+                widget.onCouponCreated();
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error creating coupon: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            }
+
+            setState(() {
+              _isLoading = false;
+            });
+          },
+        ),
+      ),
+    );
+
+    if (confirmed == true) {
+      Navigator.of(context).pop(); // Close the dialog after successful creation
     }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override
