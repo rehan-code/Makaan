@@ -284,7 +284,7 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
                 'valid_until': _validUntil.toIso8601String(),
                 'num_coupons': int.parse(_numCouponsController.text.trim()),
               });
-
+              
               if (mounted) {
                 Navigator.of(context).pop(true);
                 widget.onCouponCreated();
@@ -309,7 +309,9 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
     );
 
     if (confirmed == true) {
-      Navigator.of(context).pop(); // Close the dialog after successful creation
+      if (mounted) {
+        Navigator.of(context).pop(); // Close the dialog after successful creation
+      }
     }
   }
 
@@ -601,7 +603,7 @@ class _CreateCouponDialogState extends State<CreateCouponDialog> {
                                   ),
                                 ),
                               )
-                            : const Text('Create Offer'),
+                            : const Text('Preview Offer'),
                       ),
                     ),
                   ],
