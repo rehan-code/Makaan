@@ -23,54 +23,43 @@ class _OffersPageState extends State<OffersPage> {
 
   Future<void> _loadOffers() async {
     try {
-      final userId = Supabase.instance.client.auth.currentUser?.id;
-      if (userId == null) return;
-
-      // Get all coupons assigned to the user
+      // Get all coupons
       final response = await Supabase.instance.client
-          .from('coupon_assignments')
+          .from('coupons')
           .select('''
             id,
-            is_revealed,
-            revealed_at,
+            title,
+            description,
+            terms_and_conditions,
+            code,
+            valid_until,
+            business_id,
             created_at,
-            coupon:coupons (
-              id,
-              title,
+            num_coupons,
+            business:business_details (
+              business_name,
               description,
-              terms_and_conditions,
-              code,
-              valid_until,
-              business_id,
-              created_at,
-              num_coupons,
-              business:business_details (
-                business_name,
-                description,
-                tags,
-                is_halal,
-                is_halal_certified,
-                location,
-                social_links,
-                phone_number,
-                user_id
-              )
+              tags,
+              is_halal,
+              is_halal_certified,
+              location,
+              social_links,
+              phone_number,
+              user_id
             )
           ''')
-          .eq('user_id', userId)
           .order('created_at', ascending: false);
 
       if (!mounted) return;
 
       setState(() {
-        _offers = (response as List).map((data) {
-          final couponData = data['coupon'];
+        _offers = (response as List).map((couponData) {
           final businessData = couponData['business'];
-                    
+          
           final coupon = Coupon.fromJson({
             ...couponData,
-            'assignment_id': data['id'], // Add assignment ID from coupon_assignments table
-            'is_revealed': data['is_revealed'] ?? false,
+            'assignment_id': null, // No assignment ID since we're showing all coupons
+            'is_revealed': false, // Default to not revealed since these are all coupons
           });
           final business = BusinessDetails.fromJson(businessData);
 
