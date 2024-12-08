@@ -247,21 +247,6 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Icon(Icons.star,
-                                        color: Colors.amber[600], size: 20),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '4.5', // TODO: Add ratings system
-                                      style:
-                                          theme.textTheme.bodyLarge?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
                           ),
