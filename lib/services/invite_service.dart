@@ -19,13 +19,14 @@ class InviteService {
   static Future<int> getMonthlyInviteCount(String userId) async {
     final now = DateTime.now();
     final startOfMonth = DateTime(now.year, now.month, 1);
+    final endOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
 
     final response = await _supabase
         .from('invites')
         .select('id')
         .eq('inviter_id', userId)
         .gte('created_at', startOfMonth.toIso8601String())
-        .lte('created_at', now.toIso8601String());
+        .lte('created_at', endOfMonth.toIso8601String());
 
     return (response as List).length;
   }
@@ -34,15 +35,17 @@ class InviteService {
   static Future<Invite?> createInvite(String userId) async {
     final inviteCount = await getMonthlyInviteCount(userId);
     if (inviteCount >= 5) {
-      throw Exception('Monthly invite limit reached');
+      throw Exception('You have reached your limit of 5 invites for this month. The limit will reset at the start of next month.');
     }
 
     final code = _generateInviteCode(userId);
+    final now = DateTime.now().toIso8601String();
+    
     final response = await _supabase.from('invites').insert({
       'inviter_id': userId,
       'code': code,
       'is_used': false,
-      'created_at': DateTime.now().toIso8601String(),
+      'created_at': now,
     }).select();
 
     if (response != null && (response as List).isNotEmpty) {
